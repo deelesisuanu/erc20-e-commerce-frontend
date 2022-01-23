@@ -1,23 +1,37 @@
-import logo from './logo.svg';
-import './App.css';
+import React, { useEffect, useState } from "react";
+import getBlockchain from "./ethereum";
+import Store from "./components/Store";
 
 function App() {
+
+  const [paymentProcessor, setPaymentProcessor] = useState(undefined);
+  const [dai, setDai] = useState(undefined);
+
+  useEffect(() => {
+    const init = async () => {
+      const { paymentProcessor, dai } = await getBlockchain;
+      setPaymentProcessor(paymentProcessor);
+      setDai(dai);
+    };
+    init();
+  }, []);
+
+  if (typeof window.ethereum == undefined) {
+    return (
+      <div className="container">
+        <div className="col-sm-12">
+          <h1> Blockchain E-Commerce App </h1>
+          <p> You need to install the latest version of MetaMask </p>
+        </div>
+      </div>
+    );
+  }
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div className="container">
+      <div className="col-sm-12">
+        <h1> Blockchain E-Commerce App </h1>
+        <Store paymentProcessor={paymentProcessor} dai={dai} />
+      </div>
     </div>
   );
 }
